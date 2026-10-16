@@ -116,3 +116,7 @@ recmaestro/
 | [后台循环与优雅停机](.memory/后台循环与优雅停机.md) | 新增后台循环必须接 ctx 的铁律、双角色停机编排、日志清理分批策略 |
 
 其他关键约定：前端 vite 配置名为 `vite.config.mjs`（unplugin 新版为 ESM-only，CJS 方式加载会报错，勿改回 .js）；`internal/web/embed.go` 的嵌入指令必须带 `all:` 前缀（`//go:embed all:dist`）——go:embed 默认排除下划线/点开头文件，而按需引入构建会产出 `_plugin-vue_*.js` 这类 chunk，漏嵌会在页面加载时 404。
+
+## 开源协议
+
+[Apache-2.0](LICENSE)，Copyright 2026 macao。依赖均为 MIT / BSD / Apache-2.0 / MPL-2.0 等宽松协议，无传染性约束。
