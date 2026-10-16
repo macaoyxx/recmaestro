@@ -1,0 +1,13 @@
+# test 测试环境：连接测试基础设施，使用独立测试库。
+server:
+  env: test
+
+mysql:
+  host: 127.0.0.1
+  database: live_recorder_test
+
+redis:
+  addr: 127.0.0.1:6379
+
+consul:
+  addr: 127.0.0.1:8500

@@ -1,0 +1,108 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "graphTooltip": 1,
+  "panels": [
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "任务总数",
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "expr": "sum(recmaestro_tasks_total)",
+          "legendFormat": "总任务数"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "type": "timeseries",
+      "title": "任务状态分布",
+      "gridPos": { "h": 8, "w": 12, "x": 6, "y": 0 },
+      "targets": [
+        {
+          "expr": "recmaestro_tasks_total",
+          "legendFormat": "{{status}}"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "type": "timeseries",
+      "title": "队列积压",
+      "gridPos": { "h": 8, "w": 6, "x": 18, "y": 0 },
+      "targets": [
+        { "expr": "recmaestro_queue_size", "legendFormat": "待执行队列" },
+        { "expr": "recmaestro_scheduled_size", "legendFormat": "定时队列" }
+      ]
+    },
+    {
+      "id": 4,
+      "type": "timeseries",
+      "title": "录制时长（秒）",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "targets": [
+        {
+          "expr": "rate(recmaestro_record_duration_seconds_sum[5m]) / rate(recmaestro_record_duration_seconds_count[5m])",
+          "legendFormat": "平均录制时长"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "type": "timeseries",
+      "title": "任务完成/失败速率",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "targets": [
+        { "expr": "rate(recmaestro_tasks_completed_total[5m])", "legendFormat": "完成速率" },
+        { "expr": "rate(recmaestro_tasks_failed_total[5m])", "legendFormat": "失败速率" },
+        { "expr": "rate(recmaestro_ffmpeg_errors_total[5m])", "legendFormat": "ffmpeg 错误速率" }
+      ]
+    },
+    {
+      "id": 6,
+      "type": "timeseries",
+      "title": "worker 当前任务数",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 },
+      "targets": [
+        {
+          "expr": "recmaestro_worker_current_tasks",
+          "legendFormat": "{{node_id}}"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "type": "timeseries",
+      "title": "worker 磁盘可用",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 },
+      "targets": [
+        {
+          "expr": "recmaestro_worker_disk_free_bytes",
+          "legendFormat": "{{node_id}}"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "type": "timeseries",
+      "title": "worker CPU / 内存",
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 24 },
+      "targets": [
+        { "expr": "recmaestro_worker_cpu_percent", "legendFormat": "{{node_id}} CPU" },
+        { "expr": "recmaestro_worker_mem_percent", "legendFormat": "{{node_id}} 内存" }
+      ]
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 39,
+  "tags": ["recmaestro", "live-recording"],
+  "templating": { "list": [] },
+  "time": { "from": "now-1h", "to": "now" },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "RecMaestro 直播录制调度平台",
+  "uid": "recmaestro-overview",
+  "version": 1
+}

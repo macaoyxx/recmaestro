@@ -1,0 +1,13 @@
+# dev 开发环境：连接本地基础设施，使用独立开发库，避免污染其它环境。
+server:
+  env: dev
+
+mysql:
+  host: 127.0.0.1
+  database: live_recorder_dev
+
+redis:
+  addr: 127.0.0.1:6379
+
+consul:
+  addr: 127.0.0.1:8500

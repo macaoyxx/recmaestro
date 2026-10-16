@@ -1,0 +1,59 @@
+== 1) 20 并发 60s 混合读回归 ==
+=== 混合读压测结果 ===
+时长: 60.0s  并发: 20
+总请求: 318578  RPS: 5309.5
+错误: 0 (0.000%)
+延迟(ms): p50=3.6 p95=6.4 p99=8.2 max=35.7
+端点                       请求     错误    p50(ms)    p99(ms)
+tasks/list           158959      0        4.3        8.9
+stats                 95907      0        2.7        6.7
+audit-logs/list       63712      0        2.8        6.9
+
+== 压测后 tcpstat（观察 scheduler 连接持有）==
+== scheduler 容器 TCP 状态分布 (st: 01=ESTAB 06=TIME_WAIT) ==
+     71 01
+      2 06
+      1 0A
+== MySQL 连接指标 ==
+Variable_name	Value
+Threads_connected	37
+Variable_name	Value
+Threads_running	2
+== docker stats ==
+NAME                   CPU %     MEM USAGE / LIMIT
+deploy-worker-6        0.06%     21.57MiB / 15.49GiB
+deploy-worker-5        0.07%     21MiB / 15.49GiB
+deploy-worker-2        0.03%     20.8MiB / 15.49GiB
+deploy-worker-3        0.07%     21.77MiB / 15.49GiB
+deploy-worker-4        0.12%     20.77MiB / 15.49GiB
+recmaestro-scheduler   0.02%     43.6MiB / 15.49GiB
+recmaestro-redis       0.44%     8.457MiB / 15.49GiB
+recmaestro-mysql       0.75%     513.1MiB / 15.49GiB
+recmaestro-srs-e2e     2.79%     25.33MiB / 15.49GiB
+== WSL top（前 8 进程 + 汇总行） ==
+MiB Mem :  15863.6 total,  13533.7 free,   1682.7 used,    893.9 buff/cache     
+MiB Swap:   4096.0 total,   4096.0 free,      0.0 used.  14180.9 avail Mem 
+    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
+ 323274 root      20   0 1821108   5748   3880 S  10.0   0.0   4:16.66 docker-+
+      1 root      20   0   22348  13676   9796 S   0.0   0.1   0:06.19 systemd
+      2 root      20   0    3180   2208   2072 S   0.0   0.0   0:00.13 init-sy+
+      7 root      20   0    3196   2128   2008 S   0.0   0.0   0:00.00 init
+     50 root      19  -1   50376  19640  18452 S   0.0   0.1   0:04.36 systemd+
+
+== 2) 登录限流：等 60s 清窗口计数后连发 12 次 ==
+#01 HTTP 200 登录成功
+#02 HTTP 200 登录成功
+#03 HTTP 200 登录成功
+#04 HTTP 200 登录成功
+#05 HTTP 200 登录成功
+#06 HTTP 200 登录成功
+#07 HTTP 200 登录成功
+#08 HTTP 200 登录成功
+#09 HTTP 200 登录成功
+#10 HTTP 200 登录成功
+#11 HTTP 429 触发限流
+#12 HTTP 429 触发限流
+=== 登录限流结果 === 成功=10 限流429=2 其他=0
+== 3) 65s 后恢复验证 ==
+#01 HTTP 200 登录成功
+=== 登录限流结果 === 成功=1 限流429=0 其他=0

@@ -1,0 +1,13 @@
+# prod 生产环境骨架：地址/账号由部署时通过环境变量或覆盖文件注入，不在仓库写死。
+server:
+  env: prod
+
+mysql:
+  host: ""                  # 生产 MySQL 地址，部署时注入
+  database: live_recorder
+
+redis:
+  addr: ""                  # 生产 Redis 地址，部署时注入
+
+consul:
+  addr: ""                  # 生产 Consul 地址，部署时注入

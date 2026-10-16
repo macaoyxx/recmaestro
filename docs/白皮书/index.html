@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RecMaestro 产品白皮书 · V0.1.0</title>
+<style>
+/* ============================================================
+   RecMaestro 产品白皮书 V0.1.0 —— 简化版
+   一套字体（黑体正文 + 等宽只放数字）
+   三色墨（纸 / 墨 / 信号蓝；红只留给 REC 灯与一处强调）
+   一种容器（细墨线框）；一种章节头（细规线 + 蓝色序号）
+   ============================================================ */
+:root {
+  --paper: #F7F6F2;
+  --card: #FCFBF8;
+  --ink: #23272F;
+  --dim: #6E7380;
+  --line: #DDDBD2;
+  --line-strong: #23272F;
+  --blue: #3457D5;
+  --red: #D6404D;
+  --sans: "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", sans-serif;
+  --mono: ui-monospace, "SF Mono", Consolas, "Courier New", monospace;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  background: var(--paper); color: var(--ink);
+  font-family: var(--sans); font-size: 15.5px; line-height: 2.0;
+  -webkit-font-smoothing: antialiased;
+}
+::selection { background: var(--blue); color: #fff; }
+a { color: inherit; text-decoration: none; }
+a:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
+
+.page { max-width: 1120px; margin: 0 auto; padding: 0 44px; }
+main p, section p { max-width: 660px; }
+
+/* ---------- 封面 ---------- */
+.cover { padding: 84px 0 68px; border-bottom: 1.5px solid var(--line-strong); }
+.eyebrow { font-size: 13px; letter-spacing: .32em; color: var(--dim); margin-bottom: 30px; }
+.cover-grid { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 56px; align-items: end; }
+.cover h1 { font-size: 44px; font-weight: 800; line-height: 1.42; letter-spacing: .02em; }
+.cover .sub { font-size: 16px; color: var(--dim); margin-top: 14px; letter-spacing: .06em; }
+.cover .lead { font-size: 16px; margin-top: 28px; max-width: 620px; }
+
+/* 文档信息卡（摆正、对齐网格） */
+.meta { border: 1px solid var(--line-strong); background: var(--card); }
+.meta .m-head {
+  display: flex; align-items: center; gap: 9px;
+  border-bottom: 1px solid var(--line-strong); padding: 11px 16px;
+  font-size: 12.5px; letter-spacing: .28em; color: var(--ink);
+}
+.rec-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--red); flex: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .rec-dot { animation: rec 1.6s ease-in-out infinite; }
+  @keyframes rec { 0%,100% { opacity: 1; } 50% { opacity: .3; } }
+}
+.meta .m-row {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 10px 16px; border-bottom: 1px solid var(--line);
+}
+.meta .m-row:last-child { border-bottom: none; }
+.meta .m-row .k { font-size: 12.5px; color: var(--dim); letter-spacing: .18em; }
+.meta .m-row .v { font-family: var(--mono); font-size: 14px; }
+.meta .m-row .v.txt { font-family: var(--sans); font-size: 13px; }
+
+/* 封面数字 */
+.bench { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-top: 56px; padding-top: 26px; border-top: 1px solid var(--line); }
+.bench .n { font-family: var(--mono); font-size: 30px; font-weight: 600; color: var(--blue); line-height: 1.3; }
+.bench .n small { font-size: 14px; font-weight: 400; color: var(--dim); margin-left: 5px; }
+.bench .d { font-size: 13px; color: var(--dim); margin-top: 4px; line-height: 1.7; }
+
+/* ---------- 双栏 ---------- */
+.deck { display: grid; grid-template-columns: 216px minmax(0, 1fr); gap: 72px; padding: 64px 0 100px; }
+.toc { position: sticky; top: 40px; align-self: start; }
+.toc-title { font-size: 12.5px; letter-spacing: .3em; color: var(--dim); padding-bottom: 12px; border-bottom: 1.5px solid var(--line-strong); }
+.toc a { display: flex; gap: 0; align-items: baseline; padding: 10px 6px 10px 0; border-bottom: 1px solid var(--line); }
+.toc a:hover { color: var(--blue); }
+.toc .no { font-family: var(--mono); font-size: 12px; color: var(--dim); flex: none; width: 30px; }
+.toc a:hover .no { color: var(--blue); }
+.toc .t { font-size: 13.5px; flex: none; }
+.toc .fill { flex: 1; height: 1em; margin: 0 10px; border-bottom: 1px dotted var(--line); transform: translateY(-4px); }
+.toc .dur { font-family: var(--mono); font-size: 11px; color: var(--dim); }
+.toc .foot { font-size: 12px; color: var(--dim); line-height: 1.9; padding-top: 16px; }
+
+/* ---------- 章节 ---------- */
+section.ch { margin-bottom: 104px; }
+.ch-head { display: flex; align-items: baseline; gap: 14px; border-top: 1.5px solid var(--line-strong); padding-top: 20px; }
+.ch-head .no { font-family: var(--mono); font-size: 15px; color: var(--blue); flex: none; }
+.ch-head h2 { font-size: 26px; font-weight: 800; letter-spacing: .03em; flex: 1; }
+.ch-head .dur { font-family: var(--mono); font-size: 12px; color: var(--dim); flex: none; }
+.ch-lead { font-size: 17.5px; font-weight: 600; margin: 22px 0 6px; }
+section.ch p { margin: 14px 0; }
+section.ch p.dim { color: var(--dim); font-size: 13.5px; }
+h3.sub { font-size: 16.5px; font-weight: 700; margin: 36px 0 4px; display: flex; align-items: center; gap: 9px; }
+h3.sub::before { content: ""; width: 7px; height: 7px; background: var(--blue); flex: none; }
+strong { font-weight: 700; }
+.red-ink { color: var(--red); font-weight: 700; }
+.blue-ink { color: var(--blue); font-weight: 700; }
+
+/* ---------- 架构图：纵向三级 ---------- */
+.fig { margin: 30px 0; break-inside: avoid; }
+.fig-frame { border: 1px solid var(--line-strong); background: var(--card); padding: 30px 26px 24px; }
+.tier { display: flex; justify-content: center; gap: 14px; max-width: 780px; margin: 0 auto; }
+.tier .box { flex: 1; }
+.box {
+  border: 1px solid var(--line-strong); background: var(--paper);
+  padding: 12px 22px; text-align: center; min-width: 0;
+}
+.box b { display: block; font-size: 15px; }
+.box span { display: block; font-size: 12.5px; color: var(--dim); margin-top: 3px; line-height: 1.7; }
+.down { display: flex; flex-direction: column; align-items: center; padding: 8px 0 6px; }
+.down .arrow { color: var(--dim); font-size: 15px; line-height: 1; }
+.down .cap { font-size: 12px; color: var(--dim); margin-top: 3px; }
+.tier.arrows { padding: 0; }
+.tier.arrows .down { flex: 1; padding: 8px 0 6px; }
+.fig-cap { font-size: 12.5px; color: var(--dim); margin-top: 12px; }
+.fig-cap .no { font-family: var(--mono); color: var(--blue); margin-right: 6px; }
+
+/* ---------- 旅程时间线 ---------- */
+.run { border: 1px solid var(--line-strong); background: var(--card); margin: 30px 0; break-inside: avoid; }
+.run .r-cap {
+  display: flex; justify-content: space-between; padding: 12px 20px;
+  border-bottom: 1px solid var(--line-strong); font-size: 13px; color: var(--dim);
+}
+.run ul { list-style: none; }
+.run li { display: flex; gap: 22px; padding: 15px 20px; border-bottom: 1px solid var(--line); align-items: baseline; }
+.run li:last-child { border-bottom: none; }
+.run li .tc { font-family: var(--mono); font-size: 12.5px; color: var(--blue); flex: none; width: 48px; }
+.run li b { font-size: 15px; display: block; }
+.run li span { font-size: 13.5px; color: var(--dim); line-height: 1.8; }
+
+/* ---------- 卡片（单一制式） ---------- */
+.cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0; border: 1px solid var(--line-strong); background: var(--card); margin: 30px 0; break-inside: avoid; }
+.card { padding: 20px 22px 18px; border-bottom: 1px solid var(--line); }
+.card:nth-child(odd) { border-right: 1px solid var(--line); }
+.cards .card:nth-last-child(-n+2) { border-bottom: none; }
+.cards.c5 .card:last-child { grid-column: 1 / -1; border-right: none; }
+.card .t { font-size: 15.5px; font-weight: 700; }
+.card .d { font-size: 13.5px; color: var(--dim); margin-top: 6px; line-height: 1.9; }
+
+/* ---------- 表格 ---------- */
+table.sheet { width: 100%; border-collapse: collapse; margin: 30px 0; font-size: 14px; break-inside: avoid; }
+table.sheet caption { caption-side: top; text-align: left; font-size: 12.5px; color: var(--dim); letter-spacing: .18em; padding-bottom: 12px; }
+table.sheet th {
+  font-size: 13px; font-weight: 700; text-align: left; letter-spacing: .06em;
+  border-top: 1.5px solid var(--line-strong); border-bottom: 1px solid var(--line-strong); padding: 11px 12px;
+}
+table.sheet td { border-bottom: 1px solid var(--line); padding: 12px; vertical-align: top; }
+table.sheet td.num { font-family: var(--mono); font-weight: 600; white-space: nowrap; text-align: right; }
+table.sheet tr:last-child td { border-bottom: 1.5px solid var(--line-strong); }
+
+/* 边栏注 */
+aside.note { border-left: 2px solid var(--blue); padding: 4px 0 4px 18px; margin: 24px 0; max-width: 680px; font-size: 14px; color: var(--ink); }
+
+/* ---------- 文末 ---------- */
+.colophon { border-top: 1.5px solid var(--line-strong); padding-top: 32px; }
+.colophon .gloss { font-size: 12.5px; letter-spacing: .3em; color: var(--dim); margin-bottom: 20px; }
+.fine { font-size: 12.5px; color: var(--dim); margin-top: 24px; line-height: 2.0; max-width: 700px; }
+
+/* ---------- 响应式 ---------- */
+@media (max-width: 980px) {
+  .page { padding: 0 22px; }
+  .cover { padding-top: 56px; }
+  .cover-grid { grid-template-columns: 1fr; gap: 36px; }
+  .meta { max-width: 360px; }
+  .deck { grid-template-columns: 1fr; gap: 36px; padding-top: 44px; }
+  .toc { position: static; }
+  .cards { grid-template-columns: 1fr; }
+  .card:nth-child(odd) { border-right: none; }
+  .card { border-right: none; border-bottom: 1px solid var(--line); }
+  .cards .card:last-child { border-bottom: none; }
+  .bench { grid-template-columns: 1fr; gap: 18px; }
+}
+
+/* ---------- 打印 ---------- */
+@media print {
+  body { background: #fff; font-size: 12.5px; }
+  .toc { display: none; }
+  .deck { grid-template-columns: 1fr; gap: 0; padding-bottom: 40px; }
+  section.ch { margin-bottom: 48px; page-break-inside: avoid; }
+  .fig, .run, table.sheet, .cards, aside.note { page-break-inside: avoid; }
+  .toc .foot { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- ================= 封面 ================= -->
+  <header class="cover">
+    <div class="eyebrow">RecMaestro · 直播录制调度平台 · 产品白皮书</div>
+    <div class="cover-grid">
+      <div>
+        <h1>把每一场直播，<br>完整地留下来。</h1>
+        <p class="sub">一份写给所有人看得懂的系统说明书</p>
+        <p class="lead">这份白皮书不假设你懂编程。它会用一间电视台的比喻，讲清楚这套系统由哪些部分组成、一个录制任务从下单到交片经历什么、机器出故障时靠什么兜底，以及它实测能扛多大的场面。</p>
+      </div>
+      <div class="meta" aria-label="文档信息">
+        <div class="m-head"><span class="rec-dot"></span>文档信息</div>
+        <div class="m-row"><span class="k">版 本</span><span class="v">V0.1.0</span></div>
+        <div class="m-row"><span class="k">维护人</span><span class="v">macao</span></div>
+        <div class="m-row"><span class="k">维护时间</span><span class="v">2026-10-16</span></div>
+        <div class="m-row"><span class="k">版本规则</span><span class="v txt">随系统同步升版</span></div>
+      </div>
+    </div>
+    <div class="bench">
+      <div><div class="n">100<small>路</small></div><div class="d">同时录制，全数完好（单集群实测）</div></div>
+      <div><div class="n">18.7<small>秒</small></div><div class="d">整机断电后，全系统恢复完毕</div></div>
+      <div><div class="n">0<small>丢失</small></div><div class="d">断电、强杀、洪峰三类事故中的内容损失</div></div>
+    </div>
+  </header>
+
+  <div class="deck">
+
+    <!-- ================= 目录 ================= -->
+    <nav class="toc" aria-label="目录">
+      <div class="toc-title">目 录</div>
+      <a href="#ch1"><span class="no">01</span><span class="t">为什么需要它</span><span class="fill"></span><span class="dur">2′</span></a>
+      <a href="#ch2"><span class="no">02</span><span class="t">一分钟看懂：一间电视台</span><span class="fill"></span><span class="dur">2′</span></a>
+      <a href="#ch3"><span class="no">03</span><span class="t">系统构造：四个岗位</span><span class="fill"></span><span class="dur">3′</span></a>
+      <a href="#ch4"><span class="no">04</span><span class="t">一个任务的完整旅程</span><span class="fill"></span><span class="dur">3′</span></a>
+      <a href="#ch5"><span class="no">05</span><span class="t">出事的时候怎么办</span><span class="fill"></span><span class="dur">4′</span></a>
+      <a href="#ch6"><span class="no">06</span><span class="t">安全与信任</span><span class="fill"></span><span class="dur">2′</span></a>
+      <a href="#ch7"><span class="no">07</span><span class="t">性能与扩展</span><span class="fill"></span><span class="dur">2′</span></a>
+      <a href="#ch8"><span class="no">08</span><span class="t">界面一览</span><span class="fill"></span><span class="dur">2′</span></a>
+      <a href="#ch9"><span class="no">09</span><span class="t">术语小词典</span><span class="fill"></span><span class="dur">2′</span></a>
+      <a href="#rev"><span class="no">附</span><span class="t">修订记录</span><span class="fill"></span><span class="dur">—</span></a>
+      <p class="foot">全文约十五分钟读完。文中数字均出自 2026 年 10 月的生产就绪压测，出处见文末。</p>
+    </nav>
+
+    <!-- ================= 正文 ================= -->
+    <main>
+
+      <section class="ch" id="ch1">
+        <div class="ch-head"><span class="no">01</span><h2>为什么需要它</h2><span class="dur">约 2 分钟</span></div>
+        <p class="ch-lead">直播这门生意，最大的麻烦是“过了这村，没这店”。</p>
+        <p>主播不会挑你方便的时间开播。凌晨三点开播、连播六小时、中途换平台——这些在行业里是常态。靠人守着电脑点录制，守一天可以，守一年不行；靠平台自带的回放，平台说了算，说下架就下架。</p>
+        <p>就算录上了，麻烦也没完：三十路直播分散在五台机器上，哪台录了什么、录全了没有、文件放在哪个盘，全凭一张手写便签。断网三十秒、录一半死机，那段内容就永远缺了个口子。</p>
+        <p><strong>RecMaestro 解决的就是这一整段：你告诉它“录什么、录到几点”，它负责守着、分段录、无损拼成一个成品文件、登记入库，随时可查可下载。</strong>你不需要知道背后跑的是什么软件，你只需要知道——录的东西，一秒都不会少。</p>
+      </section>
+
+      <section class="ch" id="ch2">
+        <div class="ch-head"><span class="no">02</span><h2>一分钟看懂：一间电视台</h2><span class="dur">约 2 分钟</span></div>
+        <p class="ch-lead">整套系统，你可以想象成一间只有四样家当的小电视台。</p>
+        <div class="cards">
+          <div class="card"><div class="t">总控导播台</div><div class="d">一间台的头脑。接你的单、排时间表、盯着每台录像机是否在岗，出了状况它调度处置。你打交道的网页，就是它的前台。</div></div>
+          <div class="card"><div class="t">一排录像机</div><div class="d">真正去直播间“架机器”的人。到点认领任务、拉流、分段录制、拼成成品。一台忙不过来，就再加一台。</div></div>
+          <div class="card"><div class="t">档案库</div><div class="d">所有台账的唯一权威版本：任务、成品、操作记录都在这里落档。别的记录丢了，都能照着它重建。</div></div>
+          <div class="card"><div class="t">排班板</div><div class="d">挂在墙上的高速记事本：几点开录、谁认领了、机器几分钟前还报过平安。写得快，但以档案库为准。</div></div>
+        </div>
+        <p>四样家当各司其职，还有一条铁律：<strong>谁领的活，谁干到底。</strong>一台录像机录到一半坏了，任务不会转手给别人（半路换人必然丢内容），而是等它修好，接着录。这条规矩贯穿全系统，后面会反复见到它。</p>
+      </section>
+
+      <section class="ch" id="ch3">
+        <div class="ch-head"><span class="no">03</span><h2>系统构造：四个岗位</h2><span class="dur">约 3 分钟</span></div>
+        <p class="ch-lead">把上一章的比喻落到一张构造图上，就长这样：</p>
+        <div class="fig">
+          <div class="fig-frame">
+            <div class="tier"><div class="box"><b>你的浏览器 · 控制台网页</b><span>下单、看进度、下成品</span></div></div>
+            <div class="down"><span class="arrow">↓</span><span class="cap">网页指令</span></div>
+            <div class="tier"><div class="box"><b>总控导播台</b><span>排期 · 派单 · 盯岗 · 汇总</span></div></div>
+            <div class="tier arrows"><div class="down"><span class="arrow">↓</span></div><div class="down"><span class="arrow">↓</span></div><div class="down"><span class="arrow">↓</span></div></div>
+            <div class="down"><span class="cap">加密对讲（内部指令，外人插不进）—— 派给在岗的每一台</span></div>
+            <div class="tier">
+              <div class="box"><b>录像机 1</b><span>20 路并发</span></div>
+              <div class="box"><b>录像机 2</b><span>20 路并发</span></div>
+              <div class="box"><b>录像机 3 … N</b><span>按需增减</span></div>
+            </div>
+          </div>
+          <p class="fig-cap"><span class="no">图 1</span>系统构造。两本账在底层支撑：档案库（台账唯一权威）与排班板（高速记事），详见下文。</p>
+        </div>
+        <h3 class="sub">控制台：你唯一需要面对的东西</h3>
+        <p>一个网页，输入账号密码就能进。创建任务、查看录制进度、下载成品、管理同事的账号权限——所有日常操作都在这里，不需要碰任何机器。</p>
+        <h3 class="sub">总控导播台：只动嘴，不动手</h3>
+        <p>它自己从不录东西。它做三件事：把你的单子写上排班板；到点把任务派出去，等录像机自己认领；每台机器都要隔几秒“报个平安”，超过约定时间没报的，标记离岗并启动处置。它甚至不直接碰成片文件——文件始终留在录它的那台机器上，需要下载时由它代为转达。<strong>这种“不越俎代庖”的设计，让任何一台机器坏掉都只影响它自己手上的活。</strong></p>
+        <h3 class="sub">两本账：排班板快，档案库准</h3>
+        <p>日常调度看排班板，因为它写得快；但每月对账、事故恢复，一律以档案库为准。哪怕排班板整个丢了，总控台重启后照着档案库就能把未完成的活全部重新排上——这也是第 5 章“断电恢复”能那么快的原因。</p>
+      </section>
+
+      <section class="ch" id="ch4">
+        <div class="ch-head"><span class="no">04</span><h2>一个任务的完整旅程</h2><span class="dur">约 3 分钟</span></div>
+        <p class="ch-lead">以“录一场晚上八点到十一点的直播”为例，走一遍完整流程。</p>
+        <div class="run">
+          <div class="r-cap"><span>任务串联单</span><span>示例：20:00 开录 → 23:00 收播</span></div>
+          <ul>
+            <li><span class="tc">前三天</span><div><b>下单</b><span>你在控制台填三样：直播地址、开始时间、结束时间。想指定名字就起一个，不填系统自动编号。</span></div></li>
+            <li><span class="tc">前三天</span><div><b>排期</b><span>单子写上排班板。到点之前，谁都不用管它——包括你。</span></div></li>
+            <li><span class="tc">20:00</span><div><b>认领</b><span>整点一到，有空闲座位的录像机把任务领走，在台账上登记“这活归我”。一个任务只会被领一次，这是系统的硬保证。</span></div></li>
+            <li><span class="tc">20:00 起</span><div><b>分段录制</b><span>录像机像换胶片一样，每隔几分钟落一个独立片段。中途断网？机器自己重连续录。某个片段损坏？只坏一盘，不殃及整卷。</span></div></li>
+            <li><span class="tc">23:00</span><div><b>合并成片</b><span>到点收播，所有片段按顺序无损拼成一个成品视频文件。拼接过程不重新编码，画质零损失。</span></div></li>
+            <li><span class="tc">23:01</span><div><b>对账归档</b><span>系统核对“应录时长”与“实录时长”一致后，在档案库登记成品，你在控制台就能下载了。</span></div></li>
+          </ul>
+        </div>
+        <aside class="note"><strong>为什么非要一段一段录？</strong>整段录一旦中途出错，往往整个文件打不开；分段就像整卷胶片剪成盘，坏一盘换一盘，最后照样能拼出完整片子。这个设计是全系统“内容不丢”的底气所在。</aside>
+      </section>
+
+      <section class="ch" id="ch5">
+        <div class="ch-head"><span class="no">05</span><h2>出事的时候怎么办</h2><span class="dur">约 4 分钟</span></div>
+        <p class="ch-lead">这套系统最值钱的部分，不在顺利的时候，而在出事的时候。</p>
+
+        <h3 class="sub">情况一：一台录像机录到一半，断电了</h3>
+        <p>任务不会转给别人——半路换人，前功尽弃。排班板上，这个任务被标记为<span class="red-ink">“等原机器回来”</span>；几分钟内它没回来，控制台上这个任务会显示恢复中，你一眼能看到。机器一旦修好重新开机，<strong>十五秒内自动接着录</strong>，从断点的下一个片段开始，前后两段最后拼成一个完整成品。实测中，我们对正在录制的机器直接拔电源，恢复后的成品与从未断电的版本分毫不差。</p>
+
+        <h3 class="sub">情况二：录完了，但文件会不会悄悄缺一块？</h3>
+        <p>这是行内老问题：拼接软件遇到损坏片段，有时会假装成功，片子短了几分钟都不报错。RecMaestro 在这里设了<span class="blue-ink">三道质检</span>，外加一道兜底：</p>
+        <div class="cards">
+          <div class="card"><div class="t">第一道 · 好好收尾</div><div class="d">正常停播时按流程逐项收尾，不留半截片段。</div></div>
+          <div class="card"><div class="t">第二道 · 开拼前体检</div><div class="d">每个片段先做可读性检查，读不开的单独隔离，绝不带病拼接。</div></div>
+          <div class="card"><div class="t">第三道 · 时长对账</div><div class="d">成品时长必须与所有片段时长之和吻合，对不上就不结案、亮红灯。</div></div>
+          <div class="card"><div class="t">兜底 · 自动补账</div><div class="d">万一登记环节出错，后台巡检会发现并把台账补齐，不留悬案。</div></div>
+        </div>
+
+        <h3 class="sub">情况三：整个机房断了电</h3>
+        <p>全部机器关机、再全部开机——档案库里每一条记录、每一个成品文件完好如初，录到一半的任务由原来的机器自动接上。<strong>实测整场恢复用时 18.7 秒</strong>。恢复期间新任务排队等候，恢复后自动开跑，全程不需要人碰任何东西。</p>
+
+        <h3 class="sub">情况四：一百路同时收播的“下班高峰”</h3>
+        <p>所有任务同一秒结束录制、同时登记入库，这是系统最挤的时刻。实测一百路并发收播：任务、成品、日志三本账完全对齐，无一错漏。压力测试中我们故意制造过登记失败——系统的自动重试与巡检补账把账追了回来，这正是“兜底”一栏存在的意义。</p>
+      </section>
+
+      <section class="ch" id="ch6">
+        <div class="ch-head"><span class="no">06</span><h2>安全与信任</h2><span class="dur">约 2 分钟</span></div>
+        <p class="ch-lead">一套替你守内容的系统，自己先要守得住门。</p>
+        <p><strong>门禁。</strong>每个使用者的账号密码登录，密码连错五次自动锁定，避免无限试码；解锁由管理员操作，全程留痕。账号分两级：普通用户只能管任务，管理员才能管人、管系统。</p>
+        <p><strong>行车记录仪。</strong>谁在什么时候、从哪个网络地址、做了登录、改单、删文件这类敏感操作，系统逐条记录在案，记录带人名快照——就算当事人账号日后被删，记录依然可读。这不是为了抓人，是为了出了争议时，有账可查。</p>
+        <p><strong>加密对讲。</strong>总控台与录像机之间的内部通话走独立暗号线路，指令之外的任何人都插不进话、听不懂内容。</p>
+        <p><strong>密码不落纸面。</strong>所有密钥只存放在运行环境的保险柜里，不写进任何文档或配置文件——包括你正在读的这份。</p>
+      </section>
+
+      <section class="ch" id="ch7">
+        <div class="ch-head"><span class="no">07</span><h2>性能与扩展</h2><span class="dur">约 2 分钟</span></div>
+        <p class="ch-lead">所有数字来自 2026 年 10 月的生产就绪压测：一百个任务同一秒开录、持续高强度管理操作、逐类故障注入，全部场景跑完后的成绩单。</p>
+        <table class="sheet">
+          <caption>实测成绩单</caption>
+          <thead><tr><th>科目</th><th>成绩</th><th>说明</th></tr></thead>
+          <tbody>
+            <tr><td>同时录制</td><td class="num">100 路</td><td>五台录像机各领二十路，全部完好交片，无一失败</td></tr>
+            <tr><td>管理操作承压</td><td class="num">10000+ 次/秒</td><td>高并发查询下无一次报错，响应以毫秒计</td></tr>
+            <tr><td>故障恢复</td><td class="num">15 秒内</td><td>录像机重启后自动续录的接管时间</td></tr>
+            <tr><td>整机断电恢复</td><td class="num">18.7 秒</td><td>全系统从关机到恢复完毕</td></tr>
+            <tr><td>内容损失</td><td class="num">0</td><td>断电、强杀、收播洪峰三类事故下，成品缺失数</td></tr>
+          </tbody>
+        </table>
+        <h3 class="sub">什么时候该加机器</h3>
+        <p>经验法则很简单：一台录像机二十个座位，一路直播占一个座位。三十路直播，两台够用；一百路，五台正好。加机器不用停机、不用改配置——一条命令，新机器几分钟内自动入队开始领活；减掉也一样，它手头没干完的活会等它回来。这套弹性在压测里反复验证过：一、三、五台之间来回增减，任务归属从未出错。</p>
+        <p class="dim">如实说明：当前形态在单机房内验证到五台录像机、一百路并发。规模再往上，需要按部署手册里的容量算式重新评估，不是拍脑袋加机器。</p>
+      </section>
+
+      <section class="ch" id="ch8">
+        <div class="ch-head"><span class="no">08</span><h2>界面一览</h2><span class="dur">约 2 分钟</span></div>
+        <p class="ch-lead">控制台一共五个页面，深色播控台风格——像深夜机房里亮着的那块屏幕。每个页面只管一件事：</p>
+        <div class="cards c5">
+          <div class="card"><div class="t">任务</div><div class="d">下单与总台账：所有任务的进度、状态、成品下载，检索一页搞定。</div></div>
+          <div class="card"><div class="t">统计</div><div class="d">此刻在录几路、各状态任务多少、队列多长——机房的一眼总览。</div></div>
+          <div class="card"><div class="t">节点</div><div class="d">每台录像机的在岗状态、领了多少活、还能加多少路。</div></div>
+          <div class="card"><div class="t">用户</div><div class="d">谁能进门、谁有管理权：建号、停用、重置密码。</div></div>
+          <div class="card"><div class="t">审计</div><div class="d">行车记录仪回放：敏感操作的时间、人名、来路，逐条可查。</div></div>
+        </div>
+        <p class="dim">界面为响应式设计，手机浏览器亦可操作；任务命名带场景标签，翻页记录一目了然。</p>
+      </section>
+
+      <section class="ch" id="ch9">
+        <div class="ch-head"><span class="no">09</span><h2>术语小词典</h2><span class="dur">约 2 分钟</span></div>
+        <p class="ch-lead">如果运维同事嘴里蹦出了你陌生的词，来这里对一下。</p>
+        <table class="sheet">
+          <thead><tr><th style="width:34%">他们说的</th><th>人话</th></tr></thead>
+          <tbody>
+            <tr><td>调度器 / scheduler</td><td>总控导播台，那个只动嘴不动手的指挥中枢</td></tr>
+            <tr><td>工作节点 / worker</td><td>录像机，真正干录制的机器</td></tr>
+            <tr><td>心跳</td><td>机器每隔几秒报一次平安；太久不报即视为离岗</td></tr>
+            <tr><td>认领</td><td>录像机把任务领走并在台账登记“这活归我”，一个任务只许领一次</td></tr>
+            <tr><td>片段 / TS 段</td><td>录制时每隔几分钟落下的独立小文件，一盘“胶片”</td></tr>
+            <tr><td>合并</td><td>收播后把所有片段按顺序无损拼成一个成品视频</td></tr>
+            <tr><td>时长对账</td><td>交片前核对成品时长与片段总和是否吻合，对不上不结案</td></tr>
+            <tr><td>恢复中 / recovering</td><td>干活的机器失联了，任务在等它回来接着录</td></tr>
+            <tr><td>终态</td><td>任务的了结：完成或失败，不会再自己变卦</td></tr>
+            <tr><td>审计日志</td><td>行车记录仪：敏感操作逐条留档，带人名与时间</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- ================= 修订记录 ================= -->
+      <section class="ch" id="rev">
+        <div class="colophon">
+          <div class="gloss">修订记录</div>
+          <table class="sheet">
+            <thead><tr><th>版本</th><th>日期</th><th>维护人</th><th>变更说明</th></tr></thead>
+            <tbody>
+              <tr><td class="num">V0.1.0</td><td class="num">2026-10-16</td><td>macao</td><td>首次发布（随系统 V0.1.0）</td></tr>
+            </tbody>
+          </table>
+          <p class="fine">本白皮书版本号与系统版本保持一致，系统升版时文档同步升版并在此追加记录；维护时间为最近一次修订日期。<br>文中全部实测数据出自 2026 年 10 月生产就绪压测战役，原始报告、命令与输出存于项目 docs/iterations/V0.1.0/生产就绪压测/ 目录，可复核。</p>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+</body>
+</html>

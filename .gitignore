@@ -1,0 +1,30 @@
+# ===== 密钥 / 环境配置（真实值只走环境变量与 deploy/.env，严禁入库）=====
+.env
+deploy/.env
+!.env.example
+!deploy/.env.example
+
+# ===== 构建产物 / 依赖 =====
+bin/
+internal/web/dist/
+web/node_modules/
+web/dist/
+
+# ===== 压测大体积样本（文字报告与脚本入库，二进制样本仅本地留存）=====
+docs/**/*.mp4
+docs/**/*.bin
+
+# ===== 工具机目录 / IDE =====
+.zcode/
+.idea/
+
+# ===== 运行时产物 =====
+records/
+logs/
+*.pid
+
+# ===== 系统残留 =====
+.DS_Store
+Thumbs.db
+Desktop.ini
+nul

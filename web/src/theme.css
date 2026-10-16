@@ -1,0 +1,195 @@
+/* ============================================================
+   RecMaestro 播控台主题 — 设计令牌 + Element Plus 深色变量覆写
+   视觉方向：直播播控室（ON AIR 信号灯 / 时间码 / 机架式边栏）
+   所有页面与组件的颜色、字体决策均从这里的令牌派生。
+   ============================================================ */
+
+:root {
+  /* 底色系（蓝调深色，非纯黑） */
+  --rm-bg: #0c1424;      /* 页面底 */
+  --rm-panel: #141e33;   /* 面板 */
+  --rm-raised: #1b2742;  /* 浮起/悬停 */
+  --rm-deep: #0a101d;    /* 终端区（日志） */
+  --rm-line: #26334f;    /* 分隔线 */
+
+  /* 状态色 */
+  --rm-signal: #5b8cff;  /* 信号蓝：交互主色 */
+  --rm-live: #ff4d5e;    /* 录制红：ON AIR / 录制中 / 危险 */
+  --rm-ok: #34d399;      /* 荧绿：在线 / 完成 */
+  --rm-warn: #f5a623;    /* 琥珀：排队 / 恢复 / 中止 */
+
+  /* 文本 */
+  --rm-ink: #e8edf7;
+  --rm-ink-dim: #8a94a8;
+
+  /* 字体：数字/ID/时间码一律等宽，正文系统 CJK（零外部字体依赖） */
+  --rm-mono: ui-monospace, "Cascadia Mono", "JetBrains Mono", Consolas, "SF Mono", monospace;
+  --rm-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+/* Element Plus 深色模式变量覆写：让全部 EP 组件（表格/弹窗/下拉/分页/按钮）
+   从默认深灰切换到本主题的墨蓝令牌 */
+html.dark {
+  --el-color-primary: var(--rm-signal);
+  --el-color-primary-light-3: #7da5ff;
+  --el-color-primary-light-5: #3a5fa8;
+  --el-color-primary-light-7: #27406e;
+  --el-color-primary-light-8: #1e3358;
+  --el-color-primary-light-9: #182848;
+  --el-color-primary-dark-2: #4570d6;
+
+  --el-color-success: var(--rm-ok);
+  --el-color-success-light-3: #5fdcaa;
+  --el-color-success-light-5: #2a8a67;
+  --el-color-success-light-7: #1d5c46;
+  --el-color-success-light-8: #184537;
+  --el-color-success-light-9: #14362c;
+  --el-color-success-dark-2: #28ab7d;
+
+  --el-color-warning: var(--rm-warn);
+  --el-color-warning-light-3: #f7b84e;
+  --el-color-warning-light-5: #ab7420;
+  --el-color-warning-light-7: #6e4c17;
+  --el-color-warning-light-8: #533a14;
+  --el-color-warning-light-9: #3d2c11;
+  --el-color-warning-dark-2: #d18d1d;
+
+  --el-color-danger: var(--rm-live);
+  --el-color-danger-light-3: #ff7683;
+  --el-color-danger-light-5: #b03a48;
+  --el-color-danger-light-7: #6e2630;
+  --el-color-danger-light-8: #521d25;
+  --el-color-danger-light-9: #3c171d;
+  --el-color-danger-dark-2: #e03d4e;
+  --el-color-error: var(--rm-live);
+  --el-color-error-light-3: #ff7683;
+  --el-color-error-light-5: #b03a48;
+  --el-color-error-light-7: #6e2630;
+  --el-color-error-light-8: #521d25;
+  --el-color-error-light-9: #3c171d;
+  --el-color-error-dark-2: #e03d4e;
+
+  --el-color-info: var(--rm-ink-dim);
+  --el-color-info-light-3: #a2abc0;
+  --el-color-info-light-5: #6b7488;
+  --el-color-info-light-7: #454c5c;
+  --el-color-info-light-8: #343a48;
+  --el-color-info-light-9: #282d39;
+  --el-color-info-dark-2: #757e92;
+
+  --el-bg-color: var(--rm-panel);
+  --el-bg-color-overlay: var(--rm-raised);
+  --el-bg-color-page: var(--rm-bg);
+
+  --el-text-color-primary: var(--rm-ink);
+  --el-text-color-regular: #c6cedf;
+  --el-text-color-secondary: var(--rm-ink-dim);
+  --el-text-color-placeholder: #5a657d;
+  --el-text-color-disabled: #454e63;
+
+  --el-border-color: var(--rm-line);
+  --el-border-color-light: #223050;
+  --el-border-color-lighter: #1d2a45;
+  --el-border-color-extra-light: #1a2440;
+  --el-border-color-dark: #2e3d5e;
+
+  --el-fill-color: #1a2540;
+  --el-fill-color-light: #182340;
+  --el-fill-color-lighter: #16203a;
+  --el-fill-color-extra-light: #141d35;
+  --el-fill-color-blank: var(--rm-panel);
+  --el-fill-color-dark: #20304f;
+  --el-fill-color-darker: #24365a;
+
+  --el-border-radius-base: 4px;
+  --el-font-family: var(--rm-sans);
+}
+
+/* ---------- 基础 ---------- */
+
+html, body, #app { height: 100%; }
+body {
+  margin: 0;
+  background: var(--rm-bg);
+  color: var(--rm-ink);
+  font-family: var(--rm-sans);
+  font-size: 14px;
+}
+
+/* 键盘可见焦点 */
+:focus-visible { outline: 2px solid var(--rm-signal); outline-offset: 2px; border-radius: 2px; }
+
+/* 细滚动条 */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: var(--rm-line); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #33436a; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-corner { background: transparent; }
+
+/* ---------- 工具类 ---------- */
+
+.mono { font-family: var(--rm-mono); }
+
+/* 眉标：小号大写加宽字距的区域标签 */
+.rm-eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--rm-ink-dim);
+  font-weight: 600;
+}
+
+/* 面板卡 */
+.rm-panel {
+  background: var(--rm-panel);
+  border: 1px solid var(--rm-line);
+  border-radius: 4px;
+}
+
+/* ---------- 信号点（状态指示） ---------- */
+
+.rm-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: none;
+}
+
+/* 录制中呼吸灯：ON AIR / running */
+@keyframes rm-pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(255, 77, 94, 0.45); }
+  50% { opacity: 0.55; box-shadow: 0 0 0 5px rgba(255, 77, 94, 0); }
+}
+.rm-dot-live { animation: rm-pulse 1.6s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .rm-dot-live { animation: none; }
+  * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+}
+
+/* ---------- Element Plus 细节修正 ---------- */
+
+/* 表格：透明底融入面板，表头更深一档 */
+html.dark .el-table {
+  --el-table-border-color: var(--rm-line);
+  --el-table-header-bg-color: #101a30;
+  --el-table-header-text-color: var(--rm-ink-dim);
+  --el-table-tr-bg-color: transparent;
+  --el-table-bg-color: transparent;
+  --el-table-row-hover-bg-color: var(--rm-raised);
+  --el-table-expanded-cell-bg-color: var(--rm-panel);
+  background: transparent;
+}
+html.dark .el-table__empty-block { background: transparent; }
+html.dark .el-table__inner-wrapper::before { display: none; }
+
+/* 输入控件与面板同底 */
+html.dark .el-input__wrapper,
+html.dark .el-textarea__inner,
+html.dark .el-select__wrapper {
+  background-color: var(--rm-deep);
+}
+
+/* 对话框描边更清晰 */
+html.dark .el-dialog { border: 1px solid var(--rm-line); }

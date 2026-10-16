@@ -1,0 +1,8 @@
+Variable_name	Value
+Threads_connected	21
+Variable_name	Value
+Max_used_connections	24
+Variable_name	Value
+Connection_errors_max_connections	0
+Variable_name	Value
+Aborted_connects	0

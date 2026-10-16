@@ -1,0 +1,117 @@
+# RecMaestro 全栈编排：基础设施 + scheduler + worker
+# 敏感密码通过环境变量注入（见 .env.example），仓库不含真实密码。
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: recmaestro-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root123456}
+      TZ: Asia/Shanghai
+    # max_connections 容量算式（高并发-3：5 节点 100 任务停录洪峰曾打满默认 151，
+    # Error 1040 导致 2 任务终态写库失败）：scheduler 池 100 + worker 5 副本 × 池 30
+    # + 运维/监控余量 50 = 300。扩 worker 副本时同步上调（每 +1 节点 +30）。
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max_connections=300
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${MYSQL_ROOT_PASSWORD:-root123456}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7
+    container_name: recmaestro-redis
+    # 开启 AOF 持久化：定时/执行/心跳队列都在 Redis，丢数据会导致任务卡死
+    # requirepass 与 scheduler/worker 的 REDIS_PASSWORD 共用同一变量（默认值仅供本地开发，生产在 .env 改强密码）
+    command: ["redis-server", "--appendonly", "yes", "--requirepass", "${REDIS_PASSWORD:-redis123456}"]
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-redis123456}
+    ports:
+      # 只绑回环地址：栈内走服务名访问，避免无认证端口暴露到局域网
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      # requirepass 后必须带认证探测，否则恒为 NOAUTH 导致误判不健康
+      test: ["CMD-SHELL", "redis-cli --no-auth-warning -a \"$$REDIS_PASSWORD\" ping | grep -q PONG"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  consul:
+    image: hashicorp/consul:1.18
+    container_name: recmaestro-consul
+    command: agent -dev -client=0.0.0.0
+    ports:
+      - "8500:8500"
+      - "8600:8600/udp"
+    volumes:
+      - consul_data:/consul/data
+
+  scheduler:
+    image: recmaestro:latest
+    build:
+      # Dockerfile 在仓库根目录，构建上下文须指向 deploy/ 的上一级
+      context: ..
+      dockerfile: Dockerfile
+    container_name: recmaestro-scheduler
+    command: ["--role=scheduler", "--env=local"]
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-root123456}
+      REDIS_ADDR: redis:6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-redis123456}
+      CONSUL_ADDR: consul:8500
+      JWT_SECRET: ${JWT_SECRET:-change-me-in-prod}
+      INTERNAL_API_TOKEN: ${INTERNAL_API_TOKEN:-change-me-internal-token}
+      ADMIN_INITIAL_PASSWORD: ${ADMIN_INITIAL_PASSWORD:-admin123}
+      TZ: Asia/Shanghai
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ../config:/etc/recmaestro/config:ro
+
+  worker:
+    image: recmaestro:latest
+    # 不固定 container_name/NODE_ID：支持 docker compose up -d --scale worker=N，
+    # NODE_ID 默认取 hostname（容器 ID，天然唯一），WORKER_ADDR 默认本机 IP:port（网内可路由）
+    command: ["--role=worker", "--env=local"]
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-root123456}
+      REDIS_ADDR: redis:6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-redis123456}
+      CONSUL_ADDR: consul:8500
+      INTERNAL_API_TOKEN: ${INTERNAL_API_TOKEN:-change-me-internal-token}
+      RECORDS_DIR: /records
+      # worker 连接池按角色收敛（高并发-3）：worker_capacity=20 槽的执行器 DB 并发
+      # ≈ 20 路收尾/段上报 + 后台循环余量，池 30 = 3 倍观测峰值；scheduler 保持 100
+      #（高并发 API 面），5 副本总账 100+5×30+余量=300 与 MySQL max_connections 匹配
+      MYSQL_MAX_OPEN_CONNS: "30"
+      MYSQL_MAX_IDLE_CONNS: "30"
+      TZ: Asia/Shanghai
+    ports:
+      - "8081-8085:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ../config:/etc/recmaestro/config:ro
+      - worker_records:/records
+
+volumes:
+  mysql_data:
+  redis_data:
+  consul_data:
+  worker_records:

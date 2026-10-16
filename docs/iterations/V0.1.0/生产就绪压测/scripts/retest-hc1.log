@@ -1,0 +1,85 @@
+[retest-hc1] 压测窗口起点(UTC) 2026-10-15T08:18:54Z
+[retest-hc1] 登录成功
+
+########## 档位 50 并发 60s ##########
+---- 压测中段 tcpstat 采样 ----
+== scheduler 容器 TCP 状态分布 (st: 01=ESTAB 06=TIME_WAIT) ==
+     76 01
+      1 0A
+== MySQL 连接指标 ==
+Variable_name	Value
+Threads_connected	61
+Variable_name	Value
+Threads_running	10
+== docker stats ==
+NAME                   CPU %     MEM USAGE / LIMIT
+deploy-worker-2        0.06%     40.47MiB / 15.49GiB
+deploy-worker-3        0.07%     15.79MiB / 15.49GiB
+deploy-worker-4        0.04%     15.61MiB / 15.49GiB
+recmaestro-scheduler   486.38%   46.59MiB / 15.49GiB
+recmaestro-redis       15.55%    9.004MiB / 15.49GiB
+recmaestro-mysql       546.40%   501.8MiB / 15.49GiB
+recmaestro-srs-e2e     2.39%     22.68MiB / 15.49GiB
+== WSL top（前 8 进程 + 汇总行） ==
+MiB Mem :  15863.6 total,  11853.1 free,   1620.4 used,   2636.6 buff/cache     
+MiB Swap:   4096.0 total,   4096.0 free,      0.0 used.  14243.2 avail Mem 
+    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
+ 434373 999       20   0 9146736 537688  36952 S 560.0   3.3  28:15.11 mysqld
+ 517654 root      20   0 1374708  72900  33300 S 500.0   0.4   2:57.02 recmaes+
+ 518374 macao     20   0 2711072  19456   5944 S 270.0   0.1   1:44.51 loadgen+
+ 517745 root      20   0 2995000   8376   3880 S  80.0   0.1   0:31.12 docker-+
+    276 root      20   0 4386440 136232  70168 S  30.0   0.8  10:56.07 dockerd
+=== 混合读压测结果 ===
+时长: 60.0s  并发: 50
+总请求: 415637  RPS: 6926.7
+错误: 0 (0.000%)
+延迟(ms): p50=6.5 p95=13.9 p99=20.9 max=123.3
+端点                       请求     错误    p50(ms)    p99(ms)
+tasks/list           207610      0        7.3       21.9
+stats                124955      0        5.5       19.5
+audit-logs/list       83072      0        5.8       19.8
+---- 档位结束 ----
+
+########## 档位 100 并发 60s ##########
+---- 压测中段 tcpstat 采样 ----
+== scheduler 容器 TCP 状态分布 (st: 01=ESTAB 06=TIME_WAIT) ==
+    148 01
+      1 0A
+== MySQL 连接指标 ==
+Variable_name	Value
+Threads_connected	110
+Variable_name	Value
+Threads_running	6
+== docker stats ==
+NAME                   CPU %     MEM USAGE / LIMIT
+deploy-worker-2        0.03%     40.36MiB / 15.49GiB
+deploy-worker-3        0.02%     16.02MiB / 15.49GiB
+deploy-worker-4        0.06%     15.9MiB / 15.49GiB
+recmaestro-scheduler   494.18%   59.13MiB / 15.49GiB
+recmaestro-redis       16.00%    8.789MiB / 15.49GiB
+recmaestro-mysql       584.30%   510.1MiB / 15.49GiB
+recmaestro-srs-e2e     3.01%     22.32MiB / 15.49GiB
+== WSL top（前 8 进程 + 汇总行） ==
+MiB Mem :  15863.6 total,  11739.6 free,   1662.5 used,   2708.1 buff/cache     
+MiB Swap:   4096.0 total,   4096.0 free,      0.0 used.  14201.2 avail Mem 
+    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
+ 434373 999       20   0 9197304 544404  36952 S 560.0   3.4  33:46.52 mysqld
+ 517654 root      20   0 1374836  83452  33428 S 470.0   0.5   7:41.58 recmaes+
+ 518810 macao     20   0 2784484  24556   5944 S 240.0   0.2   1:45.48 loadgen+
+ 517745 root      20   0 3437904   9852   3880 S  80.0   0.1   1:19.98 docker-+
+    276 root      20   0 4386440 140404  70168 S  20.0   0.9  11:10.84 dockerd
+=== 混合读压测结果 ===
+时长: 60.0s  并发: 100
+总请求: 470101  RPS: 7834.1
+错误: 0 (0.000%)
+延迟(ms): p50=11.4 p95=25.9 p99=34.4 max=75.2
+端点                       请求     错误    p50(ms)    p99(ms)
+tasks/list           234635      0       12.6       35.7
+stats                141185      0       10.3       32.7
+audit-logs/list       94281      0       10.4       32.8
+---- 档位结束 ----
+
+== 日志断言（窗口 2026-10-15T08:18:54Z 起）==
+cannot assign requested address 计数: 0
+GIN 500 计数: 0
+GIN 5xx 总计: 0

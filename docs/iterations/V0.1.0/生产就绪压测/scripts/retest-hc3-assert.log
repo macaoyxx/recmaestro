@@ -1,0 +1,48 @@
+== 1) 风暴任务总量与状态分布（断言：100 个全 completed，无 running/record_failed）==
+total
+100
+status	c
+completed	100
+
+== 2) 三表一致性（核心断言）：主表 completed + 文件表恰 1 条 output 记录 + 日志表有 completed ==
+-- 不一致任务明细（期望空集）--
+-- 一致性汇总 --
+total	main_completed	file_ok	log_ok
+100	100	100	100
+
+== 3) 调度正确性回归（认领一次/无漂移/时长对账）==
+claimed_times	tasks
+1	100
+claim_drift
+0
+reconciled
+100
+worker_id	c
+recmaestro-worker-172.21.0.10-8080	20
+recmaestro-worker-172.21.0.11-8080	20
+recmaestro-worker-172.21.0.6-8080	20
+recmaestro-worker-172.21.0.7-8080	20
+recmaestro-worker-172.21.0.8-8080	20
+
+== 4) 停录洪峰 MySQL 连接指标（mysql 容器本轮重建后计数器归零，全部为本轮值）==
+Variable_name	Value
+Threads_connected	98
+Variable_name	Value
+Max_used_connections	98
+Variable_name	Value
+Connection_errors_max_connections	0
+Variable_name	Value
+Aborted_connects	0
+-- 采样峰值（retest-hc3-conn.tsv）--
+Threads_connected 峰值=98(@17:44:21)  Max_used_connections 峰值=0(@)
+-- 采样点数:  --
+
+== 5) 窗口日志扫描（起点 2026-10-15T09:39:22Z）==
+-- scheduler GIN 5xx 计数 --
+0
+-- 各 worker 容器：Too many connections / [error] / 自愈补写 计数 --
+deploy-worker-2: too_many=0 error=0 heal=0
+deploy-worker-3: too_many=0 error=0 heal=0
+deploy-worker-4: too_many=0 error=0 heal=0
+deploy-worker-5: too_many=0 error=0 heal=0
+deploy-worker-6: too_many=0 error=0 heal=0

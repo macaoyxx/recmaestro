@@ -1,0 +1,67 @@
+# RecMaestro 基础配置（各环境公共默认值）
+# 环境覆盖文件 config.<env>.yaml 会覆盖同名字段。
+# 敏感信息（密码/secret/token）一律从环境变量读取，不写在本文件。
+
+server:
+  role: ""                  # 运行角色：scheduler | worker（命令行 --role 优先）
+  host: 0.0.0.0             # 监听地址
+  port: 8080                # 监听端口
+  env: dev                  # 运行环境：dev | test | local | prod
+
+mysql:
+  host: 127.0.0.1
+  port: 3306
+  database: live_recorder
+  username: root
+  password: ""              # 密码从环境变量 MYSQL_PASSWORD 读取
+  charset: utf8mb4
+  max_open_conns: 100
+  # 连接复用：idle 与 open 保持等大，否则高并发回落时超出 idle 池的连接被关闭、
+  # 再高峰重建，TIME_WAIT 堆积耗尽 ephemeral port（压测间歇 500 根因）；
+  # conn_max_lifetime 轮换长寿命连接，conn_max_idle_time 低负载时释放连接
+  # （MySQL max_connections 默认 151，为 scheduler 与多个 worker 共用总账）
+  max_idle_conns: 100
+  conn_max_lifetime: 1h
+  conn_max_idle_time: 10m
+  table_prefix: live_rec_   # 表前缀
+
+redis:
+  addr: 127.0.0.1:6379
+  password: ""              # 密码从环境变量 REDIS_PASSWORD 读取
+  db: 0
+
+consul:
+  addr: 127.0.0.1:8500    # Consul 地址（registry.engine=consul 时使用）
+  token: ""                # ACL token，从环境变量 CONSUL_TOKEN 读取
+  scheme: http
+
+registry:
+  engine: redis            # 服务注册引擎：redis（默认，零额外依赖）| consul；注册 ID 规范 <服务名>-<ip>-<端口>
+
+recorder:
+  records_dir: ./records    # 录制产物根目录（worker 本地路径）
+  ffmpeg_path: ffmpeg       # ffmpeg 可执行文件路径
+  ffmpeg_loglevel: warning  # ffmpeg 日志级别，控制落库量
+  segment_seconds: 300      # TS 分段时长（秒）
+  worker_capacity: 20       # 单 worker 并发录制数
+  retry_backoff: 30s        # 自动重试退避封顶间隔（前 3 次 10s，之后每次 +10s，封顶本值）
+  reconnect:
+    delay_max: 10           # 断流重连最大延迟（秒）
+  segment_cleanup:
+    cleanup_enabled: true   # 合并后立即删除 TS 段（默认 true）
+    retention_days: 3       # 不立即清理时 TS 段保留天数（默认 3）
+
+jwt:
+  secret: ""                # 从环境变量 JWT_SECRET 读取
+  expire: 24h
+
+log:
+  level: info
+  # 任务日志保留天数：scheduler 每小时清理一次超期日志（live_rec_task_logs 只增不删会无限膨胀）；
+  # <=0 或缺省视为关闭清理
+  retention_days: 30
+
+scheduler:
+  scan_interval: 5s         # 到点任务扫描间隔（须小于最小重试退避，否则退避被扫描粒度吞掉）
+  recover_window: 3m        # worker 心跳超时进入 recovering 的窗口
+  interrupt_after: 30m      # 长期离线判中断阈值
